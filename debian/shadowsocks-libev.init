@@ -5,10 +5,9 @@
 # Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: lightweight secured scoks5 proxy
-# Description:       Shadowsocks-libev is a lightweight secured 
-#                    scoks5 proxy for embedded devices and low end boxes.
-#                    
+# Short-Description: lightweight secured socks5 proxy
+# Description:       Shadowsocks-libev is a lightweight secured
+#                    socks5 proxy for embedded devices and low end boxes.
 ### END INIT INFO
 
 # Author: Max Lv <max.c.lv@gmail.com>
@@ -30,8 +29,8 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 [ "$START" = "yes" ] || exit 0
 
-: ${USER:="root"}
-: ${GROUP:="root"}
+: ${USER:="nobody"}
+: ${GROUP:="nogroup"}
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
@@ -59,7 +58,7 @@ do_start()
     start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON --test > /dev/null \
         || return 1
     start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON -- \
-        -c "$CONFFILE" -a "$USER" -u -f $PIDFILE $DAEMON_ARGS \
+        -c "$CONFFILE" -u -f $PIDFILE $DAEMON_ARGS \
         || return 2
 }
 
@@ -73,7 +72,7 @@ do_stop()
     #   1 if daemon was already stopped
     #   2 if daemon could not be stopped
     #   other if a failure occurred
-    start-stop-daemon --stop --quiet --retry=KILL/5 --pidfile $PIDFILE --exec $DAEMON
+    start-stop-daemon --stop --quiet --retry=TERM/5 --pidfile $PIDFILE --exec $DAEMON
     RETVAL="$?"
     [ "$RETVAL" = 2 ] && return 2
     # Wait for children to finish too if this is a daemon that forks
